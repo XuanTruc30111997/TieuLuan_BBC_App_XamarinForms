@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             x:Class="bbc.Views.MasterPage"
+             xmlns:locals="using:MasterDetailPageNavigation"
+             xmlns:local="clr-namespace:AppConfig;assembly=AppConfig"
+             Title="MasterPage">
+
+    <ContentPage.Content>
+        <StackLayout
+            BackgroundColor="#e6eade"
+            Orientation="Vertical">
+            <StackLayout
+                Orientation="Vertical"
+                WidthRequest="300"
+                BackgroundColor="{x:Static local:Colors.ColorMain}">
+                <controls:CircleImage
+                    Source="logo.png"
+                    Aspect="AspectFit"
+                    Margin="10,10,10,10"
+                    WidthRequest="100"
+                    HeightRequest="100">
+                    <controls:CircleImage.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding AvatarClick}"/>
+                    </controls:CircleImage.GestureRecognizers>
+                </controls:CircleImage>
+                <Label      
+                    Text="BBC Learning English"
+                    TextColor="Black"
+                    Font="14"
+                    HorizontalOptions="Center">
+                </Label>
+            </StackLayout>
+            <ListView 
+                BackgroundColor="#e6eade"
+                ItemsSource="{Binding ListTopic}" 
+                WidthRequest="300" 
+                HorizontalOptions="Center" 
+                Margin="10,10,0,10"
+                SelectedItem="{Binding SelectedItem}"
+                ItemTapped="ListView_ItemTapped">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout
+                                Orientation="Horizontal">
+                                <Image
+                                    Source="topic.png"
+                                    VerticalOptions="Center"
+                                    Aspect="AspectFit"/>
+                                <Label      
+                                    Text="{Binding Name}"
+                                    Font="16"
+                                    TextColor="Black"
+                                    VerticalOptions="Center"/>     
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <!--<ListView
+                BackgroundColor="#e6eade"
+                ItemsSource="{Binding ListMasterItem}" 
+                WidthRequest="300" 
+                HorizontalOptions="Center" 
+                Margin="10,10,0,10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout
+                                Orientation="Horizontal">
+                                <Image
+                                    Source="{Binding SourceImage}"
+                                    VerticalOptions="Center"
+                                    Aspect="AspectFit"/>
+                                <Label      
+                                    Text="{Binding Title}"
+                                    Font="16"
+                                    TextColor="Black"
+                                    VerticalOptions="Center"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>-->
+            <Button
+                BackgroundColor="{x:Static local:Colors.ColorMain}"
+                Text="{Binding TextMode}"
+                VerticalOptions="End"
+                Font="16"
+                TextColor="Black"
+                Command="{Binding ModeClick}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bbc.Views.LessonPage">
+
+    <ContentPage.Content>
+        <StackLayout
+            Orientation="Vertical">
+            <ActivityIndicator HorizontalOptions="Center" VerticalOptions="Center"  x:Name="activity"/>
+            <ListView 
+                x:Name="lvLesson"
+                BackgroundColor="White"
+                ItemsSource="{Binding ListLesson}"
+                SelectedItem="{Binding SelectedItem}"
+                ItemTapped="ListView_ItemTapped"
+                HasUnevenRows="True"
+                Margin="10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout
+                                    Orientation="Vertical"
+                                    Margin="0,5,0,0">
+                                    <StackLayout 
+                                        Orientation="Horizontal"
+                                        Spacing="5"
+                                        Margin="0,0,5,0">
+                                        <Image
+                                            Source="{Binding ImageURL}"
+                                            WidthRequest="100"
+                                            HeightRequest="50"
+                                            Aspect="AspectFill"/>
+                                        <StackLayout
+                                            Orientation="Vertical"
+                                            Spacing="3">
+                                            <Label
+                                                Text="{Binding Name}"
+                                                FontSize="18"
+                                                TextColor="LightSkyBlue"
+                                                LineBreakMode="TailTruncation"
+                                                FontAttributes="Italic"/>
+
+                                            <Label
+                                                Text="{Binding Sumary}"
+                                                FontSize="15"
+                                                TextColor="Maroon"
+                                                LineBreakMode="TailTruncation"
+                                                FontAttributes="Italic"/>
+                                        </StackLayout>
+                                        <Button
+                                            x:Name="btnDownload"
+                                            Image="{Binding ImageDownload}"
+                                            WidthRequest="20"
+                                            HeightRequest="20"
+                                            Clicked="ImageDownloadClick"
+                                            BackgroundColor="Transparent"
+                                            CommandParameter="{Binding Id}"/>
+                                    </StackLayout>
+                                    <Label 
+                                        HeightRequest="0.5"                                            
+                                        BackgroundColor="Black"/>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

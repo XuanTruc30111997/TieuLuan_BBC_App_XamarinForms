@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bbc.Views.DetailLessonPage"
+             Title="{Binding NameLesson}">
+
+    <ContentPage.Content>
+        <StackLayout
+            Orientation="Vertical"
+            BackgroundColor="#dbe0d2">
+            <ScrollView
+                BackgroundColor="#f1f4eb"
+                VerticalOptions="FillAndExpand">
+                <StackLayout
+                    Orientation="Vertical">
+                    <Button
+                        x:Name="btnExercise"
+                        Margin="10"
+                        Text="EXERCISES"
+                        Image="exercise.png"
+                        TextColor="Black"
+                        Font="15"
+                        BorderRadius="4"
+                        WidthRequest="200"
+                        HorizontalOptions="Center"
+                        BackgroundColor="LightSkyBlue"
+                        Command="{Binding ExerciseClick}"/>
+                    <Label
+                        Text="{Binding Transcript}"
+                        HorizontalOptions="Fill"
+                        Margin="10"
+                        FontSize="16"
+                        FontAttributes="Italic"
+                        TextColor="Black"/>
+                </StackLayout>
+            </ScrollView>
+            <StackLayout
+                BackgroundColor="#359e4f">
+                <Grid
+                Margin="10"
+                BackgroundColor="#359e4f">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Button
+                        x:Name="btnPlay"
+                        BackgroundColor="Transparent"
+                        Image="play.png"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Clicked="btnPlay_Clicked"
+                        Command="{Binding PlayClick}"/>
+                    <Button
+                        x:Name="btnPause"
+                        BackgroundColor="Transparent"
+                        Image="pause.png"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Clicked="btnPause_Clicked"
+                        Command="{Binding PauseClick}"/>
+                    <Label
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Margin="5,0,0,0"
+                            VerticalOptions="Center"
+                            Text="{Binding Value,Source={x:Reference slider}}"
+                            TextColor="Black"
+                            FontAttributes="Italic"/>
+                    <Slider
+                            x:Name="slider"
+                            Grid.Column="2"
+                            Grid.Row="0"
+                            Minimum="{Binding ValueSlider}"
+                            Maximum="{Binding MaximumSlider}"
+                            MinimumTrackColor="LightSkyBlue"
+                            MaximumTrackColor="Black"
+                            ThumbColor="LightSkyBlue"
+                            Value="{Binding ValueSlider}"/>
+                    <Label
+                            Grid.Column="3"
+                            Grid.Row="0"
+                            Text="{Binding MaximumSlider}"
+                            VerticalOptions="Center"
+                            TextColor="Black"
+                            FontAttributes="Italic"/>
+                    <ImageButton
+                        Aspect="AspectFit"
+                        x:Name="btnOpenFile"
+                        Source="openfile.png"
+                        Command="{Binding OpenAudioClick}"
+                        Grid.Column="4"
+                        Grid.Row="0"/>
+                </Grid>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
