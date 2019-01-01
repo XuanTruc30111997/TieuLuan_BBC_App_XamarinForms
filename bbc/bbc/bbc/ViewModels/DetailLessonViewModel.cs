@@ -123,7 +123,7 @@ namespace bbc.ViewModels
         }
         private async Task GoToExercisePage()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new ExercisePage(_lesson));
+            await Application.Current.MainPage.Navigation.PushAsync(new ExercisePage(_lesson,this._mode));
         }
         private async Task DoWhenPlayClickedAsync()
         {

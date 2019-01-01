@@ -9,6 +9,7 @@ using Plugin.Connectivity;
 using Plugin.DownloadManager;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -31,7 +32,21 @@ namespace bbc.ViewModels
         //    }
         //}
         //variable check mode online or offline
+        private bool isSearching;
         private string mode = null;
+        private List<Lesson> myLstLesson = new List<Lesson>();
+
+        private string _keyWord;
+        public string KeyWord
+        {
+            get { return _keyWord; }
+            set
+            {
+                _keyWord = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _idItemListLesson { get; set; }
         public string IdItemListLesson
         {
@@ -70,7 +85,16 @@ namespace bbc.ViewModels
         }
         #endregion
 
-        #region commands
+        #region Constructor
+        public LessonViewModel(Topic topicItem, string mode)
+        {
+            isSearching = false;
+            this.mode = mode;
+            ShowListLesson(topicItem).GetAwaiter();
+        }
+        #endregion
+
+        #region Commands
         public ICommand ItemListViewClick
         {
             get
@@ -82,31 +106,38 @@ namespace bbc.ViewModels
             }
             set { }
         }
+
         //click image download on list lesson
-        public ICommand ImgDownloadAudio
+        //public ICommand<Task<bool>> ImgDownloadAudio
+        //{
+        //    get
+        //    {
+        //        return new Command<Task<bool>>(DownloadOrDelete().GetAwaiter());
+        //    }
+        //}
+
+        //public ICommand ImgDownloadAudio => new Command<bool>(() =>
+        //    {
+        //        bool isDone = await DownloadOrDelete().GetAwaiter();
+        //    });
+
+        public Command SearchLesson
         {
             get
             {
-                return new Command(async () =>
-                {
-                    await DownloadAudio();
-                });
+                return new Command(Search);
             }
-            set { }
         }
+
         #endregion
 
-        public LessonViewModel(Topic topicItem,string mode)
-        {
-            this.mode = mode;
-            ShowListLesson(topicItem).GetAwaiter();
-        }
+        #region methods
         private async Task ShowListLesson(Topic topicItem)
         {
             restLessonService = new RestLessonService();
             LessonOfflineService lessonOfflineService = new LessonOfflineService();
             //check internet connection
-            if(mode.Equals(Mode.Online))
+            if (mode.Equals(Mode.Online))
             {
                 if (CrossConnectivity.Current.IsConnected)
                 {
@@ -116,7 +147,7 @@ namespace bbc.ViewModels
                         //set value for image download
                         foreach (var lesson in ListLesson)
                         {
-                            if(HandleData.CheckExistLessonInLocalDB(lesson.Id)==true)
+                            if (HandleData.CheckExistLessonInLocalDB(lesson.Id) == true)
                             {
                                 lesson.ImageDownload = "downloaded.png";
                             }
@@ -124,7 +155,7 @@ namespace bbc.ViewModels
                             {
                                 lesson.ImageDownload = "download.png";
                             }
-                            
+
                         }
                     }
                     else
@@ -142,14 +173,14 @@ namespace bbc.ViewModels
                                 lesson.ImageDownload = "download.png";
                             }
                         }
-                        
+
                     }
                 }
                 else
-                {                  
+                {
                     var _currentPage = GetCurrentPage();
-                    var action=await _currentPage.DisplayAlert("Cannot connect internet!Please check internect connection or use Offline Mode!", "Would you like to use Offline Mode?", "OK","Cancel");
-                    if(action == true)
+                    var action = await _currentPage.DisplayAlert("Cannot connect internet!Please check internect connection or use Offline Mode!", "Would you like to use Offline Mode?", "OK", "Cancel");
+                    if (action == true)
                     {
                         await _currentPage.Navigation.PushAsync(new NavigationDrawerPage(null, Mode.Offline));
                     }
@@ -159,7 +190,7 @@ namespace bbc.ViewModels
             else
             {
                 //ImageDownload = "delete.png";
-                if (topicItem!=null)
+                if (topicItem != null)
                 {
                     ListLesson = lessonOfflineService.GetLessonFromLocalDBToTopic(topicItem.Id);
                     //set value for image download
@@ -177,18 +208,19 @@ namespace bbc.ViewModels
                         lesson.ImageDownload = "delete.png";
                     }
                 }
-                
-            }
-           
 
+            }
+            myLstLesson = ListLesson;
         }
+
         private async Task GoToAudioPage()
         {
             int _positionItem = _listLesson.IndexOf(_selectedItem);
             var _currentPage = GetCurrentPage();
             //await _currentPage.TranslateTo(-_currentPage.Width, 0, 500, Easing.SpringOut);
-            await _currentPage.Navigation.PushAsync(new DetailLessonPage(_listLesson[_positionItem],mode));
+            await _currentPage.Navigation.PushAsync(new DetailLessonPage(_listLesson[_positionItem], mode));
         }
+
         private async Task DownloadAudio()
         {
             try
@@ -219,10 +251,10 @@ namespace bbc.ViewModels
                     //Save lesson item into local database when click dowload image
                     offlineService.InsertLessonToLocalDatabase(lessonItem.Id, lessonItem.Name, lessonItem.Year,
                         lessonItem.IdTP, lessonItem.Transcript, lessonItem.Actor, lessonItem.Sumary, lessonItem.Vocabulary);
-                    DependencyService.Get<IMessage>().ShortToast("index=" + _idItemListLesson);
+                    DependencyService.Get<IMessage>().ShortToast("Downloading " + lessonItem.Name.Trim());
                 }
                 else
-                {   
+                {
                     //delete lesson
                     var _currentPage = GetCurrentPage();
                     var action = await _currentPage.DisplayAlert("Question!", "Are you sure you want to delete lesson item offline?", "OK", "Cancel");
@@ -232,12 +264,67 @@ namespace bbc.ViewModels
                         await _currentPage.Navigation.PushAsync(new NavigationDrawerPage(null, Mode.Offline));
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
 
             }
         }
+
+        public async Task<bool> DownloadOrDelete()
+        {
+            DownloadDeleteLesson downloadDeleteLesson = new DownloadDeleteLesson();
+
+            if (mode.Equals(Mode.Online)) // Is Online
+            {
+                if (!downloadDeleteLesson.CheckLesson(_idItemListLesson))
+                {
+                    if (await Application.Current.MainPage.DisplayAlert("Download???", "Do you wan to download", "OK", "Cancel"))
+                    {
+                        // DownloadLessonByID(idLesson).GetAwaiter();
+                        downloadDeleteLesson.DownloadLesson(ListLesson, _idItemListLesson).GetAwaiter();
+                        return true;
+                    }
+                    return false;
+                }
+                else // exists Lesson
+                {
+                    DependencyService.Get<IMessage>().LongToast("Download Fail!! The lesson already exists");
+                    return false;
+                }
+            }
+            else // Is Offline
+            {
+                if (await Application.Current.MainPage.DisplayAlert("Delete???", "Do you wan to Delete", "OK", "Cancel"))
+                {
+                    // DeleteLessonByID(idLesson);
+                    downloadDeleteLesson.DeleteLesson(_idItemListLesson).GetAwaiter();
+                    //ShowMyDataOffline().GetAwaiter();
+                    ShowListLesson(null).GetAwaiter();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private void Search()
+        {
+            if (!string.IsNullOrEmpty(_keyWord))
+            {
+                ListLesson = myLstLesson.Where(c => c.Name.ToLower().Contains(_keyWord.ToLower())).ToList();
+                isSearching = true;
+            }
+            else
+            {
+                if (isSearching)
+                {
+                    ListLesson = myLstLesson;
+                    isSearching = false;
+                }
+            }
+        }
+
+        #endregion
     }
 }

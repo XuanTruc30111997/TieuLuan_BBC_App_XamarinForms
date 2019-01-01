@@ -6,6 +6,13 @@
     <ContentPage.Content>
         <StackLayout
             Orientation="Vertical">
+
+            <SearchBar
+                Placeholder="Search Lesson Here!"
+                Text="{Binding KeyWord}"
+                TextChanged="Handler_SearchChanged"
+                SearchCommand="{Binding SearchLesson}"/>
+
             <ActivityIndicator HorizontalOptions="Center" VerticalOptions="Center"  x:Name="activity"/>
             <ListView 
                 x:Name="lvLesson"

@@ -15,13 +15,13 @@ namespace bbc.Views
 	public partial class ExercisePage : ContentPage
 	{
         private ExerciseViewModel examViewModel = new ExerciseViewModel();
-        public ExercisePage (Lesson lesson)
+        public ExercisePage (Lesson lesson,string mode)
 		{
             InitializeComponent();
             var myScrollView = new ScrollView { Padding = 10 };
             Content = myScrollView;
 
-            var ahihi = examViewModel.createAuto(lesson);
+            var ahihi = examViewModel.createAuto(lesson,mode);
             myScrollView.Content = ahihi;
             Title = examViewModel.Title;
         }

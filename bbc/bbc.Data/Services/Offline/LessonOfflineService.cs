@@ -59,6 +59,7 @@ namespace bbc.Data.Services.Offline
             }
             return null;
         }
+
         public void InsertLessonToLocalDatabase(string id, string name,int year,string idTopic,string transcript,
             string actor,string sumary,string vocaburary)
         {
@@ -85,6 +86,12 @@ namespace bbc.Data.Services.Offline
 
             }
         }
+
+        public void AddLesson(Lesson myLesson)
+        {
+            sQLiteConnection.Insert(myLesson);
+        }
+
         public void DeleteLesson(string lessonID)
         {
             try

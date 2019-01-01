@@ -29,16 +29,11 @@ namespace bbc.Views
         {
             if(mode.Equals(Mode.Online))
             {
-                btnExercise.IsEnabled = true;
-                btnExercise.IsVisible = true;
-
                 btnOpenFile.IsEnabled = false;
                 btnOpenFile.IsVisible = false;               
             }
             else
             {
-                btnExercise.IsVisible = false;
-                btnExercise.IsEnabled = false;
                 btnOpenFile.IsEnabled = true;
                 btnOpenFile.IsVisible = true;
             }
