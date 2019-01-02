@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 using System.Threading.Tasks;
@@ -28,11 +29,13 @@ namespace bbc.Functions
                 {
                     nameLesson = myLesson.Name.Trim();
                     string urlAudio = myLesson.FileURLOnline.ToString();
+
+                    string[] mySplit = urlAudio.Split('/');
                     lessonDb = new LessonOfflineService();
                     // lessonDb.AddLesson(myLesson);
 
                     lessonDb.InsertLessonToLocalDatabase(myLesson.Id, myLesson.Name, myLesson.Year,
-                        myLesson.IdTP, myLesson.Transcript, myLesson.Actor, myLesson.Sumary, myLesson.Vocabulary);
+                        myLesson.IdTP, myLesson.Transcript, myLesson.Actor, myLesson.Sumary, myLesson.Vocabulary, mySplit[mySplit.Length - 1]);
 
                     await Task.Run(() =>
                     {
@@ -58,7 +61,7 @@ namespace bbc.Functions
                     answerDb.AddAnswer(myAnswer); //Download Answer
             }
 
-            DependencyService.Get<IMessage>().LongToast("Downloadi " + nameLesson + "Completed");
+            DependencyService.Get<IMessage>().LongToast("Download " + nameLesson + " Completed");
         }
 
         public async Task DeleteLesson(string idLesson)
@@ -77,6 +80,10 @@ namespace bbc.Functions
             // Thực hiện xóa Lesson
             lessonDb = new LessonOfflineService();
             lessonDb.DeleteLesson(idLesson);
+
+            // var list = Directory.GetFiles("/storage/emulated/0/Android/data/com.companyname.bbc/files/Download","*.mp3");
+            // System.IO.File.Delete("/storage/emulated/0/Android/data/com.companyname.bbc/files/Download/6m_2017_perfect_santa.mp3");
+            // File.Delete(list[0]);
 
             DependencyService.Get<IMessage>().ShortToast("Delete completed");
         }

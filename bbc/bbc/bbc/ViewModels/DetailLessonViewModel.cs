@@ -3,6 +3,7 @@ using bbc.Data.Models;
 using bbc.Views;
 using Plugin.FilePicker;
 using Plugin.MediaManager;
+using Plugin.MediaManager.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,9 @@ namespace bbc.ViewModels
         private string _audioPath = null;
         //variable check mode online or offline
         private string _mode = null;
+
+        private bool isPlayed;
+        private int pos;
         //variable check mode online or offline
         private int _maximumSlider { get; set; }
         public int MaximumSlider
@@ -88,10 +92,11 @@ namespace bbc.ViewModels
             }
         }
         #endregion
-        public DetailLessonViewModel(Lesson lesson,string mode)
+        public DetailLessonViewModel(Lesson lesson, string mode)
         {
             this._mode = mode;
             this._lesson = lesson;
+            isPlayed = false;
             ShowLesson();
         }
         private void ShowLesson()
@@ -105,26 +110,28 @@ namespace bbc.ViewModels
         {
             try
             {
-                var file =await CrossFilePicker.Current.PickFile();
-                if(file!=null)
+                var file = await CrossFilePicker.Current.PickFile();
+                if (file != null)
                 {
                     _audioPath = file.FilePath;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
 
         }
+
         private void ValueSliderChanged()
         {
 
         }
         private async Task GoToExercisePage()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new ExercisePage(_lesson,this._mode));
+            await Application.Current.MainPage.Navigation.PushAsync(new ExercisePage(_lesson, this._mode));
         }
+
         private async Task DoWhenPlayClickedAsync()
         {
             try
@@ -135,7 +142,7 @@ namespace bbc.ViewModels
                 }
                 else
                 {
-                    await CrossMediaManager.Current.Play(_audioPath);
+                    await CrossMediaManager.Current.Play("/storage/emulated/0/Android/data/com.companyname.bbc/files/Download/" + _lesson.FileURLDowload);
 
                 }
             }
@@ -143,7 +150,7 @@ namespace bbc.ViewModels
             {
 
             }
-            
+
         }
         private async Task DoWhenPauseClickedAsync()
         {

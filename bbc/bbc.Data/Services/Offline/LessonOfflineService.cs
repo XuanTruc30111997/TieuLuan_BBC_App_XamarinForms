@@ -12,7 +12,7 @@ namespace bbc.Data.Services.Offline
     {
         SQLiteConnection sQLiteConnection = null;
         public LessonOfflineService()
-        {           
+        {
             sQLiteConnection = DependencyService.Get<ILocalDatabaseConnection>().GetConnection();
             try
             {
@@ -53,15 +53,15 @@ namespace bbc.Data.Services.Offline
                 var listLessons = sQLiteConnection.Table<Lesson>().Where(lesson => lesson.IdTP == topicID).ToList();
                 return listLessons;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
             return null;
         }
 
-        public void InsertLessonToLocalDatabase(string id, string name,int year,string idTopic,string transcript,
-            string actor,string sumary,string vocaburary)
+        public void InsertLessonToLocalDatabase(string id, string name, int year, string idTopic, string transcript,
+            string actor, string sumary, string vocaburary, string fileDonwload)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace bbc.Data.Services.Offline
                 lesson.Sumary = sumary;
                 lesson.Vocabulary = vocaburary;
                 lesson.ImageURL = "nophoto.png";
-                lesson.FileURLDowload = null;
+                lesson.FileURLDowload = fileDonwload;
                 lesson.FileURLOnline = null;
                 lesson.CreatedDate = null;
                 lesson.UpdatedDate = null;
@@ -97,8 +97,9 @@ namespace bbc.Data.Services.Offline
             try
             {
                 sQLiteConnection.Query<Lesson>("Delete from Lesson where Id='" + lessonID + "'");
+                // string ahaha = sQLiteConnection.Table<Lesson>().FirstOrDefault()?.FileURLDowload.ToString();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }

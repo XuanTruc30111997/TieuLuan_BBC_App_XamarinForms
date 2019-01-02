@@ -221,56 +221,56 @@ namespace bbc.ViewModels
             await _currentPage.Navigation.PushAsync(new DetailLessonPage(_listLesson[_positionItem], mode));
         }
 
-        private async Task DownloadAudio()
-        {
-            try
-            {
-                LessonOfflineService offlineService = new LessonOfflineService();
-                if (mode.Equals(Mode.Online))
-                {
-                    //get URL of Audio follow lessonID
-                    string urlAudio = null;
-                    foreach (var lesson in _listLesson)
-                    {
-                        if (lesson.Id.Trim().Equals(_idItemListLesson.Trim()))
-                        {
-                            urlAudio = lesson.FileURLOnline.ToString();
-                            break;
-                        }
-                    }
-                    await Task.Run(() =>
-                    {
-                        var downloadManager = CrossDownloadManager.Current;
-                        var file = downloadManager.CreateDownloadFile(urlAudio);
-                        downloadManager.Start(file, true);
-                    });
+        //private async Task DownloadAudio()
+        //{
+        //    try
+        //    {
+        //        LessonOfflineService offlineService = new LessonOfflineService();
+        //        if (mode.Equals(Mode.Online))
+        //        {
+        //            //get URL of Audio follow lessonID
+        //            string urlAudio = null;
+        //            foreach (var lesson in _listLesson)
+        //            {
+        //                if (lesson.Id.Trim().Equals(_idItemListLesson.Trim()))
+        //                {
+        //                    urlAudio = lesson.FileURLOnline.ToString();
+        //                    break;
+        //                }
+        //            }
+        //            await Task.Run(() =>
+        //            {
+        //                var downloadManager = CrossDownloadManager.Current;
+        //                var file = downloadManager.CreateDownloadFile(urlAudio);
+        //                downloadManager.Start(file, true);
+        //            });
 
-                    restLessonService = new RestLessonService();
-                    //get lesson item follow id
-                    Lesson lessonItem = await restLessonService.GetLessonByID(_idItemListLesson.ToString());
-                    //Save lesson item into local database when click dowload image
-                    offlineService.InsertLessonToLocalDatabase(lessonItem.Id, lessonItem.Name, lessonItem.Year,
-                        lessonItem.IdTP, lessonItem.Transcript, lessonItem.Actor, lessonItem.Sumary, lessonItem.Vocabulary);
-                    DependencyService.Get<IMessage>().ShortToast("Downloading " + lessonItem.Name.Trim());
-                }
-                else
-                {
-                    //delete lesson
-                    var _currentPage = GetCurrentPage();
-                    var action = await _currentPage.DisplayAlert("Question!", "Are you sure you want to delete lesson item offline?", "OK", "Cancel");
-                    if (action == true)
-                    {
-                        offlineService.DeleteLesson(_idItemListLesson);
-                        await _currentPage.Navigation.PushAsync(new NavigationDrawerPage(null, Mode.Offline));
-                    }
-                }
+        //            restLessonService = new RestLessonService();
+        //            //get lesson item follow id
+        //            Lesson lessonItem = await restLessonService.GetLessonByID(_idItemListLesson.ToString());
+        //            //Save lesson item into local database when click dowload image
+        //            offlineService.InsertLessonToLocalDatabase(lessonItem.Id, lessonItem.Name, lessonItem.Year,
+        //                lessonItem.IdTP, lessonItem.Transcript, lessonItem.Actor, lessonItem.Sumary, lessonItem.Vocabulary);
+        //            DependencyService.Get<IMessage>().ShortToast("Downloading " + lessonItem.Name.Trim());
+        //        }
+        //        else
+        //        {
+        //            //delete lesson
+        //            var _currentPage = GetCurrentPage();
+        //            var action = await _currentPage.DisplayAlert("Question!", "Are you sure you want to delete lesson item offline?", "OK", "Cancel");
+        //            if (action == true)
+        //            {
+        //                offlineService.DeleteLesson(_idItemListLesson);
+        //                await _currentPage.Navigation.PushAsync(new NavigationDrawerPage(null, Mode.Offline));
+        //            }
+        //        }
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
-        }
+        //    }
+        //}
 
         public async Task<bool> DownloadOrDelete()
         {

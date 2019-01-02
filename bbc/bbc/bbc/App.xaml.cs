@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using bbc.Views;
 using bbc.Data.Models;
+using AppConfig;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace bbc
@@ -13,6 +14,7 @@ namespace bbc
         {
             InitializeComponent();
             MainPage = new NavigationPage(new StartPage());
+            // MainPage = new NavigationPage(new NavigationDrawerPage(null,Mode.Online));
         }
 
         protected override void OnStart()
